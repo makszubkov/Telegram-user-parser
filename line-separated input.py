@@ -8,25 +8,30 @@ def check_availability(username):
     try:
         tg_resp = requests.get(f"https://t.me/{username}", headers=headers, timeout=10)
         if "If you have Telegram, you can contact" in tg_resp.text:
-            return False  
+            return False  # username unavailable
     except Exception as e:
-        print(f"[Error Telegram] {username}: {e}")
+        print(f"[Ошибка Telegram] {username}: {e}")
         return False
 
-    # check Fragment
+    # Check Fragment
     try:
         fr_resp = requests.get(f"https://fragment.com/username/{username}", headers=headers, timeout=10)
         if "unavailable" not in fr_resp.text.lower():
-            return False  
+            return False  # username unavailable
     except Exception as e:
-        print(f"[Error Fragment] {username}: {e}")
+        print(f"[Ошибка Fragment] {username}: {e}")
         return False
 
-    return True  
+    return True  # username available
 
 def main():
-    user_input = input("Paste username list:\n")
-    usernames = [u.strip().lower() for u in user_input.split(",") if u.strip()]
+    print("Insert usernames one per line. Blank line - finish input.")
+    usernames = []
+    while True:
+        line = input().strip()
+        if not line:
+            break
+        usernames.append(line.lower())
 
     available = []
     taken = []
@@ -41,11 +46,11 @@ def main():
             taken.append(name)
         time.sleep(1)
 
-    print("\n🎉 Free username's:")
+    print("\n🎉 Available username:")
     for u in available:
         print(f"@{u}")
 
-    print("\n🚫 Taken username's:")
+    print("\n🚫 Unavailable username:")
     for u in taken:
         print(f"@{u}")
 
